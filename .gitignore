@@ -1,0 +1,74 @@
+# ==========================================
+# Environments & Secrets (NEVER COMMIT)
+# ==========================================
+.env
+*.env
+backend/app/.env
+frontend/.env
+
+# ==========================================
+# Python & Virtual Environments
+# ==========================================
+.venv/
+venv/
+ENV/
+env/
+*/venv/
+*/.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Python Distribution / Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.dist/
+
+# Databases & SQLite
+*.sqlite
+*.sqlite3
+*.db
+backend/timetable.db
+
+# Backend Logs & Temp Uploads
+*.log
+logs/
+backend/logs/
+*.log.*
+tmp/
+
+# ==========================================
+# Node / Frontend
+# ==========================================
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.npm
+.eslintcache
+*.local
+
+# ==========================================
+# IDE & Operating System Files
+# ==========================================
+.vscode/
+*.code-workspace
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
