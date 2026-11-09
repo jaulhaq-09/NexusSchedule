@@ -55,12 +55,25 @@ AI-Timetable-Generator/
 
 ## ⚙️ Quick Start Setup
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+ and npm / pnpm
-- Tesseract-OCR (optional, for OCR document extraction)
+### Option A: 🐳 1-Command Docker Setup (Recommended)
+If you or your team have Docker Desktop installed, you can spin up the entire application (PostgreSQL + FastAPI + React) in one command:
 
-### 1. Backend Setup
+```bash
+# Start all 3 containers
+docker-compose up --build
+```
+- **Frontend:** http://localhost:5173
+- **Backend API & Swagger Docs:** http://localhost:8000/docs
+- **Database:** PostgreSQL on port 5432 (automatically provisioned with persistent storage)
+
+To stop the containers:
+```bash
+docker-compose down
+```
+
+---
+
+### Option B: Manual Local Setup (Without Docker)
 ```bash
 # Navigate to backend
 cd backend

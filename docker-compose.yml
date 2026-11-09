@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: nexusschedule-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-timetable_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jaul}
+      POSTGRES_DB: ${POSTGRES_DB:-timetable_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-timetable_user} -d ${POSTGRES_DB:-timetable_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexusschedule-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-timetable_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jaul}
+      POSTGRES_DB: ${POSTGRES_DB:-timetable_db}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-timetable_user}:${POSTGRES_PASSWORD:-jaul}@db:5432/${POSTGRES_DB:-timetable_db}
+      SECRET_KEY: ${SECRET_KEY:-09566c962d355869dddaba9211e371af014fbe9782ac63370644b428de5c9f83}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      BREVO_SENDER_EMAIL: ${BREVO_SENDER_EMAIL:-}
+      BREVO_SENDER_NAME: ${BREVO_SENDER_NAME:-NexusSchedule}
+      APP_URL: ${APP_URL:-http://localhost:5173}
+      DEBUG: "false"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/logs:/app/logs
+
+  # 3. React + Vite Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nexusschedule-frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_data:
+
