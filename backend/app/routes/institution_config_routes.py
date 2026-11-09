@@ -12,7 +12,7 @@ from app.database.db import get_db
 from app.database.deps import get_active_workspace
 from app.models.workspace import Workspace
 from app.models.user import User
-from app.routes.auth_routes import require_admin
+from app.routes.auth_routes import require_admin, require_editor
 from app.models.institution_config import InstitutionConfig
 from app.models.timeslot import TimeSlot
 from app.schemas.institution_config_schema import (
@@ -86,7 +86,7 @@ def update_config(
     config_data: InstitutionConfigUpdate,
     db: Session = Depends(get_db),
     workspace: Workspace = Depends(get_active_workspace),
-    _a: User = Depends(require_admin)
+    _a: User = Depends(require_editor)
 ):
     """Update timetable structure configuration"""
     config = get_or_create_config(db, workspace.id)
@@ -121,7 +121,7 @@ def update_config(
 def apply_structure(
     db: Session = Depends(get_db),
     workspace: Workspace = Depends(get_active_workspace),
-    _a: User = Depends(require_admin)
+    _a: User = Depends(require_editor)
 ):
     """
     Apply the configured structure to timeslots table.
@@ -169,7 +169,7 @@ def apply_structure(
 def reset_to_default(
     db: Session = Depends(get_db),
     workspace: Workspace = Depends(get_active_workspace),
-    _a: User = Depends(require_admin)
+    _a: User = Depends(require_editor)
 ):
     """Reset configuration to default values"""
     try:
@@ -240,7 +240,7 @@ async def upload_logo(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     workspace: Workspace = Depends(get_active_workspace),
-    _a: User = Depends(require_admin)
+    _a: User = Depends(require_editor)
 ):
     """Upload institution logo"""
 

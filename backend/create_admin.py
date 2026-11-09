@@ -17,7 +17,11 @@ def create_admin():
 
         existing = db.query(User).filter(User.email == email).first()
         if existing:
-            print(f"❌ A user with email '{email}' already exists.")
+            existing.role = "admin"
+            if password:
+                existing.set_password(password)
+            db.commit()
+            print(f"✅ User '{email}' was found and successfully promoted to 'admin'!")
             return
 
         admin = User(name=name or email.split("@")[0], email=email, role="admin")

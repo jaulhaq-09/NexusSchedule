@@ -171,7 +171,8 @@ const TimetableStructureDesigner = ({ onNavigateToConfig }) => {
         setMessage('✓ Logo uploaded successfully!');
         setLogoPreview(`http://localhost:8000${data.logo_url}`);
       } else {
-        setMessage('❌ Failed to upload logo');
+        const errData = await response.json().catch(() => ({}));
+        setMessage(`❌ ${errData.detail || 'Failed to upload logo (Admin access required)'}`);
       }
     } catch (error) {
       console.error('Logo upload error:', error);
