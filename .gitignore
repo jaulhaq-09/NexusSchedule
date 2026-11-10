@@ -38,7 +38,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 .dist/
-
+**/__pycache__/
 # Databases & SQLite
 *.sqlite
 *.sqlite3

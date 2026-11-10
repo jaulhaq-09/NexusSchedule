@@ -227,17 +227,15 @@ export default function Labs() {
     }
   };
 
-  // ✅ FIXED: Quick Reset now shows a confirmation modal before deleting
-  // everything, matching Faculty.jsx's delete-confirmation pattern.
   const confirmQuickReset = async () => {
     setResetting(true);
     try {
-      await Promise.all(labs.map((lab) => API.delete(`/labs/${lab.id}`)));
-      fetchLabs();
-      showToast("All labs deleted");
+      const response = await API.delete("/labs/reset-all");
+      await fetchLabs();
+      showToast(`All labs deleted (${response.data.deleted})`);
     } catch (err) {
       console.error("Failed to reset:", err);
-      showToast("Reset failed", "error");
+      showToast(err.response?.data?.detail || "Reset failed", "error");
     } finally {
       setResetting(false);
       setShowResetConfirm(false);

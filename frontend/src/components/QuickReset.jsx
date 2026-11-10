@@ -86,23 +86,41 @@ const handleReset = async () => {
   setError("");
   
   try {
+    if (target === "subjects") {
+      const response = await API.delete("/subjects/reset-all");
+      const deleted = response.data.deleted;
+      setProgress({ deleted, imported: 0, total: deleted });
+      setStage("done");
+      setTimeout(() => {
+        if (onComplete) onComplete();
+      }, 1500);
+      return;
+    }
+
+    if (target === "labs") {
+      const response = await API.delete("/labs/reset-all");
+      const deleted = response.data.deleted;
+      setProgress({ deleted, imported: 0, total: deleted });
+      setStage("done");
+      setTimeout(() => {
+        if (onComplete) onComplete();
+      }, 1500);
+      return;
+    }
+
     const response = await API.get(ENDPOINTS[target]);
     const existing = response.data || [];
     console.log("📋 Existing records:", existing.length);
     
-    setProgress({ deleted: 0, imported: 0, total: existing.length + SAMPLE_DATA[target].length });
+    setProgress({ deleted: 0, imported: 0, total: existing.length });
     
     // Delete existing
     for (let i = 0; i < existing.length; i++) {
       const record = existing[i];
       console.log(`🗑️ Deleting record ${record.id}...`);
-      try {
-        await API.delete(`${ENDPOINTS[target]}/${record.id}`);
-        setProgress(p => ({ ...p, deleted: p.deleted + 1 }));
-        console.log(`✅ Deleted ${record.id}`);
-      } catch (err) {
-        console.error(`❌ Failed to delete ${target} ${record.id}:`, err);
-      }
+      await API.delete(`${ENDPOINTS[target]}/${record.id}`);
+      setProgress(p => ({ ...p, deleted: p.deleted + 1 }));
+      console.log(`✅ Deleted ${record.id}`);
     }
       // Step 3: Import sample data
       //setStage("importing");
@@ -234,7 +252,7 @@ const handleReset = async () => {
               Deleting Old Data...
             </h3>
             <p style={{ margin: 0, fontSize: "13px", color: "#94A3B8", fontFamily: "'JetBrains Mono', monospace" }}>
-              Deleted {progress.deleted} of {progress.total - SAMPLE_DATA[target].length} records
+              Deleted {progress.deleted} of {progress.total} records
             </p>
           </>
         )}
@@ -270,7 +288,7 @@ const handleReset = async () => {
               Reset Complete!
             </h3>
             <p style={{ margin: 0, fontSize: "13px", color: "#94A3B8", fontFamily: "'JetBrains Mono', monospace" }}>
-              Successfully imported {progress.imported} {LABELS[target].toLowerCase()}
+              Successfully deleted {progress.deleted} {LABELS[target].toLowerCase()}
             </p>
           </>
         )}
@@ -294,7 +312,10 @@ const handleReset = async () => {
               {error}
             </p>
             <button
-              onClick={() => setStage("idle")}
+              onClick={() => {
+                if (onComplete) onComplete();
+                setStage("idle");
+              }}
               style={{
                 padding: "10px 20px",
                 background: "rgba(255,255,255,0.06)",

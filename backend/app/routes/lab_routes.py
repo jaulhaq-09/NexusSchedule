@@ -203,6 +203,14 @@ def update_lab(lab_id: int, lab: LabUpdate, db: Session = Depends(get_db), _a: U
     return db_lab
 
 
+@router.delete("/reset-all")
+def reset_all_labs(db: Session = Depends(get_db), _a: User = Depends(require_editor)):
+    """Allow admins and coordinators to reset labs across all departments."""
+    deleted = db.query(Lab).delete(synchronize_session=False)
+    db.commit()
+    return {"message": "All labs reset", "deleted": deleted}
+
+
 # ═══════════════════════════════════════════════════════════════
 # DELETE /labs/{lab_id}
 # ═══════════════════════════════════════════════════════════════

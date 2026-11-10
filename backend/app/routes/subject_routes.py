@@ -99,6 +99,14 @@ def update_subject(id: int, data: SubjectCreate, db: Session = Depends(get_db), 
     return subject
 
 
+@router.delete("/subjects/reset-all")
+def reset_all_subjects(db: Session = Depends(get_db), _a: User = Depends(require_editor)):
+    """Allow admins and coordinators to reset subjects across all departments."""
+    deleted = db.query(Subject).delete(synchronize_session=False)
+    db.commit()
+    return {"message": "All subjects reset", "deleted": deleted}
+
+
 @router.delete("/subjects/{id}")
 def delete_subject(id: int, db: Session = Depends(get_db), _a: User = Depends(require_editor)):
     subject = db.query(Subject).filter(Subject.id == id).first()
