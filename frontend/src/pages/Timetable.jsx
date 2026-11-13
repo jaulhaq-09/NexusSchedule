@@ -1137,9 +1137,10 @@ export default function Timetable() {
     // afternoon slots when available.
     const coreTokens = shuffle(theoryTokens.filter(t => t.isCore));
     const nonCoreTokens = shuffle(theoryTokens.filter(t => !t.isCore));
-    // Two-slot (double) tokens go first because they need two free slots in a
-    // row; core-before-non-core order is kept inside each group (stable sort).
-    const shuffledTokens = [...coreTokens, ...nonCoreTokens].sort((a, b) => (b.isDouble ? 1 : 0) - (a.isDouble ? 1 : 0));
+    // Place one-period classes before doubles so they can claim early periods;
+    // doubles then use the remaining adjacent slots. Core order is stable within
+    // each duration group.
+    const shuffledTokens = [...coreTokens, ...nonCoreTokens].sort((a, b) => (a.isDouble ? 1 : 0) - (b.isDouble ? 1 : 0));
     const subjectDayUsed = {};
     // Generated single-period classes that the gap-filler below may move.
     const movable = new Set();
